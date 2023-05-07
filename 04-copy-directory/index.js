@@ -1,26 +1,28 @@
-const { mkdir, copyFile } = require('node:fs/promises');
-let { readdir } = require('fs');
+const { copyFile, readdir, unlink } = require('node:fs/promises');
+let fs = require('fs');
 const path = require('path');
 
-const nextPath = path.join(__dirname, './files-copy')
-const currentPath = path.join(__dirname, './files')
+const nextPath = path.join(__dirname, './files-copy');
+const currentPath = path.join(__dirname, './files');
 
-const createDir = async () => {
-  try {
-    await mkdir(nextPath, { recursive: true })
-    readdir(currentPath, (err, files) => {
-      if(err) {
-        throw err
-      } else {
-        for (const i of files) {
-          const filePath = path.join(__dirname,'files', i)
-          copyFile(filePath, path.join(__dirname,'files-copy', i))
-        }
-      } 
-   });
-  } catch (err) {
-    console.error(err.message);
-  }
-}
+const copyDir = async () => {
+  fs.mkdir(nextPath, { recursive: true }, () => {});
 
-createDir();
+  await readdir(nextPath, {withFileTypes: true})
+    .then(elements => {
+
+      elements.forEach((el) => {
+        unlink(path.join(nextPath, el.name));
+      });
+    });
+
+  await readdir(currentPath, {withFileTypes: true})
+    .then(files => {
+
+      files.forEach((file) => {
+        copyFile(path.join(currentPath, file.name), path.join(nextPath, file.name));
+      });
+    });
+};
+
+copyDir();
