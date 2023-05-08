@@ -65,7 +65,6 @@ const copyDir = () => {
   async function dirChain(fromDir, toDir) {
     await readdir(fromDir, {withFileTypes: true})
       .then(files => {
-        console.log(files);
         files.forEach( async (file) => {
           if (file.isDirectory()) {
             const pathFromDir = path.join(fromDir, file.name);
