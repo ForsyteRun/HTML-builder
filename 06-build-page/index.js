@@ -21,8 +21,6 @@ const { readdir, copyFile } = require('node:fs/promises');
       const templates = [];
       data.forEach(el => {
         const fileName = el.name.match(/([\w]*\.)*/)[0].replace('.', '');
-        // const fileBody = path.parse(el.name)
-        // console.log(fileName,fileBody.name);
         templates.push(createTemplate(fileName));
       });
 
@@ -74,9 +72,7 @@ const copyDir = () => {
             const pathToDir = path.join(toDir, file.name);
             dirChain(pathFromDir, pathToDir);
           } else {
-            fs.mkdir(toDir, {recursive: true}, error => {
-              console.log(error);
-            });
+            fs.mkdir(toDir, {recursive: true}, () => {});
             copyFile(path.join(fromDir, file.name), path.join(toDir, file.name));
           }
         });
